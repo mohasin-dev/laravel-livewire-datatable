@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -42,4 +44,18 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function getStatusAttribute()
+    {
+        return $this->is_active ? 'Active' : 'Inactive';
+    }
+
+    public static function ScopeSearch($query, $searchString)
+    {
+        if ($searchString) {
+            return $query->where('name', 'LIKE', "%{$searchString}%")
+                        ->orWhere('email', 'LIKE', "%{$searchString}%")
+                        ->orWhere('phone', 'LIKE',"%{$searchString}%");
+        }
+    }
 }
